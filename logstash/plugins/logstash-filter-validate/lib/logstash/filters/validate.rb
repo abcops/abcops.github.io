@@ -2,6 +2,8 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 
+require "json"
+
 # This class is used to validate fields defined after a reindex
 class LogStash::Filters::Validate < LogStash::Filters::Base
 
@@ -22,18 +24,67 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
 
   public
   def register
+
     # hash that will store the validation data
     @keyhash = Hash.new
 
     load_validate_file()
 
-    @logger.info("validate_file", @keyhash)
+    @logger.debug("validate_file", @keyhash)
 
   end # def register
 
   public
   def filter(event)
 
+    errorflag=false
+
+    getjson = @keyhash[event["path"]]
+        
+    if getjson.nil?
+      @logger.error("key does not exists in #{@validate_file} ", event["path"])
+      errorflag=true
+    else 
+      begin
+        getjson.each do |k,v|
+          if event["type"] !~ /access[.-]log/ and event["type"] !~ /error[.-]log/
+            if event[k] != v
+              errorflag=true
+            end
+          else
+            if k != "type" and k != "host"
+              if k == "zone"
+                if event["host"] =~ /^inw/
+                  if event["zone"] != "red"
+                    errorflag=true
+                  end
+                elsif event["host"] =~ /^nuc/
+                  if event["zone"] != "blue"
+                    errorflag=true
+                  end
+                end
+              else
+                if event[k] != v
+                  errorflag=true
+                end
+              end
+            end
+          end
+        end
+      rescue
+        @logger.error("Unable to determine valid data")
+        errorflag=true
+      end
+    end
+        
+    if errorflag 
+      if defined?(event["tags"]).nil?
+        event["tags"] = Array.new("_validationerror")
+      else
+        event["tags"].push("_validationerror")
+      end
+    end
+ 
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter
