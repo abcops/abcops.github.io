@@ -13,6 +13,7 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
   # filter {
   #   validate {
   #     validate_file => "/opt/logstash/validate/validate.out"
+  #     tag_on_failure => "_validationerror"
   #   }
   # }
   #
