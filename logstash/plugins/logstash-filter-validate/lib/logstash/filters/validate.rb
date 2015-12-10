@@ -20,6 +20,10 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
   
   # define the location of the validate file
   config :validate_file, :validate => :string, :default => "/opt/logstash/validate/validate.out"
+
+  # Append values to the `tags` field when there has been no
+  # successful match
+  config :tag_on_failure, :validate => :array, :default => ["_validationerror"]
   
 
   public
@@ -31,6 +35,10 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
     load_validate_file()
 
     @logger.debug("validate_file", @keyhash)
+
+    if @keyhash.empty?
+      @logger.error("Unable to parse validation file")
+    end
 
   end # def register
 
@@ -78,10 +86,9 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
     end
         
     if errorflag 
-      if defined?(event["tags"]).nil?
-        event["tags"] = Array.new("_validationerror")
-      else
-        event["tags"].push("_validationerror")
+      @tag_on_failure.each do |tag|
+        event["tags"] ||= []
+        event["tags"] << tag unless event["tags"].include?(tag)
       end
     end
  
