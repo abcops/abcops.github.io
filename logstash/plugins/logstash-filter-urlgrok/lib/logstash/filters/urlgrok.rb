@@ -14,7 +14,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   # filter {
   #   urlgrok {
   #     match => "message"
-  #     tags_prefix => "URLGROK_"
+  #     tag_prefix => "URLGROK_"
   #     patterns_dir => "/pattern/location"
   #     tag_on_failure => [ "_urlgrokparsefailure" ]
   #   }
@@ -39,7 +39,8 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   config :match, :validate => :string, :default => "message"
 
   # Prefix added to the patternkey which will be stored in the tags
-  config :tags_prefix, :validate => :string, :default => "URLGROK_"
+  # default in nil which will add no tag 
+  config :tag_prefix, :validate => :string, :default => nil
 
   # location of the pattern files
   config :patterns_dir, :validate => :array, :default => [ "/opt/logstash/urlpatterns" ]
@@ -109,9 +110,11 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
 
         key = get_category_tags(event, urlarr)
         if not key.nil?
-           event["tags"] ||= []
-           event["tags"] << "#{@tags_prefix}#{key}" unless event["tags"].include?("#{@tags_prefix}#{key}")
-           @logger.info("pattern match? key=URLGROK_#{key}") 
+           if not @tag_prefix.nil?
+             event["tags"] ||= []
+             event["tags"] << "#{@tag_prefix}#{key}" unless event["tags"].include?("#{@tag_prefix}#{key}")
+             @logger.info("pattern match? key=URLGROK_#{key}") 
+           end
         else
            @logger.info("pattern match? nil")
            add_error_tags(event)
@@ -169,7 +172,9 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
       if k =~ /^tag/
         event['category'] << v unless event['category'].include?(v)
       elsif k =~ /^seg/
-        event['category'] << urlarr[v.to_i] #unless event['category'].include?(urlarr[v.to_i])
+        if not urlarr[v.to_i].nil?
+          event['category'] << urlarr[v.to_i] #unless event['category'].include?(urlarr[v.to_i])
+        end
       else
         @logger.info("Invalid category tag")
       end

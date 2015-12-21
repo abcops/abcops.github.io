@@ -68,6 +68,7 @@ describe LogStash::Filters::UrlGrok do
     let(:config) do <<-CONFIG
       filter {
         urlgrok {
+          tag_prefix => "URLGROK_"
           patterns_dir => "#{tmpfile_path}"          
         }
       }
@@ -324,7 +325,7 @@ describe LogStash::Filters::UrlGrok do
     let(:config) do <<-CONFIG
       filter {
         urlgrok {
-          tags_prefix => "URLOK_"
+          tag_prefix => "URLOK_"
           patterns_dir => "#{tmpfile_path}"
         }
       }
@@ -349,6 +350,7 @@ describe LogStash::Filters::UrlGrok do
     let(:config) do <<-CONFIG
       filter {
         urlgrok {
+          tag_prefix => "URLGROK_"
           patterns_dir => "#{tmpfile_path}"
         }
       }
@@ -381,6 +383,31 @@ describe LogStash::Filters::UrlGrok do
 
     sample "" do
       insist { subject["tags"] }.nil?
+    end
+
+  end
+
+  describe "test if the seg value exists" do
+
+    tmpfile_path = Stud::Temporary.pathname
+
+    File.open(tmpfile_path, "w") do |fd|
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag1\": \"test\", \"seg1\": \"2\", \"seg2\": \"3\", \"seg3\": \"4\", \"seg4\": \"5\" } }")
+    end
+
+    let(:config) do <<-CONFIG
+      filter {
+        urlgrok {
+          tag_prefix => "URLGROK_"
+          patterns_dir => "#{tmpfile_path}"
+        }
+      }
+    CONFIG
+    end
+
+    sample "/test/a/b/c" do
+      insist { subject["tags"] } == [ "URLGROK_1" ]
+      insist { subject["category"] } == [ "test", "a", "b", "c" ]
     end
 
   end
