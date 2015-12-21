@@ -33,7 +33,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   #    tags to be attached to the event, seg "#" define an element with in the url
   #    example /www/test/url
   #    segemnt /1  /2   /3
-  # { "type": "output", "patternkey": "1", "pattern": "^example", "category_tags": { "seg_<segment_location>": "category1", "tag": "category2" .... } }  
+  # { "type": "output", "patternkey": "1", "pattern": "^example", "category_tags": { "seg1": "1", "tag1": "category1" .... } }  
 
   # the event key that we will be parsing
   config :match, :validate => :string, :default => "message"
@@ -166,7 +166,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   private
   def add_category(event, category_tags, urlarr)
     category_tags.each do |k,v|
-      if k == "tag"
+      if k =~ /^tag/
         event['category'] << v unless event['category'].include?(v)
       elsif k =~ /^seg/
         event['category'] << urlarr[v.to_i] #unless event['category'].include?(urlarr[v.to_i])

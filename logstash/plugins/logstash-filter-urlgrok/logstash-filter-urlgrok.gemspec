@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'logstash-filter-urlgrok'
-  s.version         = '1.0.1'
+  s.version         = '1.0.2'
   s.licenses = ['Apache License (2.0)']
   s.summary = "urlgrok filter will parse url request pre defined in a pattern file"
   s.description = ""

@@ -17,43 +17,43 @@ describe LogStash::Filters::UrlGrok do
     tmpfile_path = Stud::Temporary.pathname
 
     File.open(tmpfile_path, "w") do |fd|
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/([^\/]+)\/code\/(.*)\", \"category_tags\": { \"tag\": \"code\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"2\", \"pattern\": \"^\/([^\/]+)\/cb\/.*.(jpg|png|gif)$\", \"category_tags\": { \"tag\": \"image\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"3\", \"pattern\": \"^\/([^\/]+)\/cb\/\", \"category_tags\": { \"tag\": \"cb\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"4\", \"pattern\": \"^\/([^\/]+)\/contentblob\/(.*)\", \"category_tags\": { \"tag\": \"contentblob\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"5\", \"pattern\": \"^\/(.+)\/feed\/(.*)\", \"category_tags\": { \"tag\": \"feed\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"6\", \"pattern\": \"^\/([^\/]+)\/studio\/(.*)\", \"category_tags\": { \"tag\": \"studio\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"7\", \"pattern\": \"^\/([^\/]+)\/rimage\/(.*)\", \"category_tags\": { \"tag\": \"rimage\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"8\", \"pattern\": \"^\/([^\/]+)\/image\/(.*)\", \"category_tags\": { \"tag\": \"image\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"9\", \"pattern\": \"^\/([^\/]+)\/lb\/(.*)\", \"category_tags\": { \"tag\": \"lb\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"10\", \"pattern\": \"^\/([^\/]+)\/linkableblob\/(.*)\", \"category_tags\": { \"tag\": \"linkableblob\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"11\", \"pattern\": \"^\/(.+)\/pagination\/([a-z\/]+)\/([0-9]+)$\", \"category_tags\": { \"tag\": \"pagination\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"12\", \"pattern\": \"^\/(.+)\/service\/([a-z\/]+)\/([0-9]+)$\", \"category_tags\": { \"tag\": \"service\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"13\", \"pattern\": \"^\/([^\/]+)\/ajax\/(.*)\", \"category_tags\": { \"tag\": \"ajax\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"14\", \"pattern\": \"^\/([^\/]+)\/map\/id=(.*)\", \"category_tags\": { \"tag\": \"map\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"15\", \"pattern\": \"^\/([^\/]+)\/map\/$\", \"category_tags\": { \"tag\": \"map\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"16\", \"pattern\": \"^\/([^\/]+)\/media\/(.*)\", \"category_tags\": { \"tag\": \"media\", \"seg1\": \"3\", \"seg2\": \"4\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"17\", \"pattern\": \"^\/([^\/]+)\/archive\/(.*)\", \"category_tags\": { \"tag\": \"archive\", \"seg1\": \"3\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"18\", \"pattern\": \"^\/([^\/]+)\/topics\/(.*)\", \"category_tags\": { \"tag\": \"topics\", \"seg1\": \"3\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"19\", \"pattern\": \"^\/([^\/]+)\/topic\/(.*)\", \"category_tags\": { \"tag\": \"topic\", \"seg1\": \"3\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"20\", \"pattern\": \"^\/([^\/]+)\/([^\/]+)\/topic\/(.*)\", \"category_tags\": { \"tag\": \"topic\", \"seg1\": \"2\", \"seg2\": \"4\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"21\", \"pattern\": \"^\/([^\/]+)\/persontopic\/(.*)\", \"category_tags\": { \"tag\": \"persontopic\", \"seg1\": \"3\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"22\", \"pattern\": \"^\/([^\/]+)\/bytopic\/(.*)\", \"category_tags\": { \"tag\": \"bytopic\", \"seg1\": \"3\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"23\", \"pattern\": \"^\/probe\", \"category_tags\": { \"tag\": \"probe\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"24\", \"pattern\": \"^\/news\/[0-9]{4}-[0-9]{2}-[0-9]{1,2}\", \"category_tags\": { \"tag\": \"detailed_page\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"25\", \"pattern\": \"^\/([a-z]+)\/im(?:[g]|(age))\", \"category_tags\": { \"tag\": \"image\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"26\", \"pattern\": \"^\/([a-z]+)\/([0-9]+)$\", \"category_tags\": { \"tag\": \"cm_id_lookup\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"27\", \"pattern\": \"^\/([a-z]+)\/([a-z]+)-([a-z]+)\", \"category_tags\": { \"tag\": \"person\", \"seg1\": \"2\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"28\", \"pattern\": \"^\/([a-z]+)\/programs\/index=\", \"category_tags\": { \"tag\": \"index\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"29\", \"pattern\": \"^\/([a-z]+)\/programs\/([a-z0-9]+)\", \"category_tags\": { \"tag\": \"detailed_page\", \"seg1\": \"3\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"30\", \"pattern\": \"^\/radionational\/([a-z]+)\", \"category_tags\": { \"tag\": \"detailed_page\", \"seg1\": \"3\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/([^\/]+)\/code\/(.*)\", \"category_tags\": { \"tag1\": \"code\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"2\", \"pattern\": \"^\/([^\/]+)\/cb\/.*.(jpg|png|gif)$\", \"category_tags\": { \"tag1\": \"image\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"3\", \"pattern\": \"^\/([^\/]+)\/cb\/\", \"category_tags\": { \"tag1\": \"cb\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"4\", \"pattern\": \"^\/([^\/]+)\/contentblob\/(.*)\", \"category_tags\": { \"tag1\": \"contentblob\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"5\", \"pattern\": \"^\/(.+)\/feed\/(.*)\", \"category_tags\": { \"tag1\": \"feed\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"6\", \"pattern\": \"^\/([^\/]+)\/studio\/(.*)\", \"category_tags\": { \"tag1\": \"studio\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"7\", \"pattern\": \"^\/([^\/]+)\/rimage\/(.*)\", \"category_tags\": { \"tag1\": \"rimage\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"8\", \"pattern\": \"^\/([^\/]+)\/image\/(.*)\", \"category_tags\": { \"tag1\": \"image\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"9\", \"pattern\": \"^\/([^\/]+)\/lb\/(.*)\", \"category_tags\": { \"tag1\": \"lb\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"10\", \"pattern\": \"^\/([^\/]+)\/linkableblob\/(.*)\", \"category_tags\": { \"tag1\": \"linkableblob\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"11\", \"pattern\": \"^\/(.+)\/pagination\/([a-z\/]+)\/([0-9]+)$\", \"category_tags\": { \"tag1\": \"pagination\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"12\", \"pattern\": \"^\/(.+)\/service\/([a-z\/]+)\/([0-9]+)$\", \"category_tags\": { \"tag1\": \"service\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"13\", \"pattern\": \"^\/([^\/]+)\/ajax\/(.*)\", \"category_tags\": { \"tag1\": \"ajax\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"14\", \"pattern\": \"^\/([^\/]+)\/map\/id=(.*)\", \"category_tags\": { \"tag1\": \"map\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"15\", \"pattern\": \"^\/([^\/]+)\/map\/$\", \"category_tags\": { \"tag1\": \"map\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"16\", \"pattern\": \"^\/([^\/]+)\/media\/(.*)\", \"category_tags\": { \"tag1\": \"media\", \"seg1\": \"3\", \"seg2\": \"4\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"17\", \"pattern\": \"^\/([^\/]+)\/archive\/(.*)\", \"category_tags\": { \"tag1\": \"archive\", \"seg1\": \"3\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"18\", \"pattern\": \"^\/([^\/]+)\/topics\/(.*)\", \"category_tags\": { \"tag1\": \"topics\", \"seg1\": \"3\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"19\", \"pattern\": \"^\/([^\/]+)\/topic\/(.*)\", \"category_tags\": { \"tag1\": \"topic\", \"seg1\": \"3\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"20\", \"pattern\": \"^\/([^\/]+)\/([^\/]+)\/topic\/(.*)\", \"category_tags\": { \"tag1\": \"topic\", \"seg1\": \"2\", \"seg2\": \"4\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"21\", \"pattern\": \"^\/([^\/]+)\/persontopic\/(.*)\", \"category_tags\": { \"tag1\": \"persontopic\", \"seg1\": \"3\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"22\", \"pattern\": \"^\/([^\/]+)\/bytopic\/(.*)\", \"category_tags\": { \"tag1\": \"bytopic\", \"seg1\": \"3\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"23\", \"pattern\": \"^\/probe\", \"category_tags\": { \"tag1\": \"probe\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"24\", \"pattern\": \"^\/news\/[0-9]{4}-[0-9]{2}-[0-9]{1,2}\", \"category_tags\": { \"tag1\": \"detailed_page\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"25\", \"pattern\": \"^\/([a-z]+)\/im(?:[g]|(age))\", \"category_tags\": { \"tag1\": \"image\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"26\", \"pattern\": \"^\/([a-z]+)\/([0-9]+)$\", \"category_tags\": { \"tag1\": \"cm_id_lookup\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"27\", \"pattern\": \"^\/([a-z]+)\/([a-z]+)-([a-z]+)\", \"category_tags\": { \"tag1\": \"person\", \"seg1\": \"2\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"28\", \"pattern\": \"^\/([a-z]+)\/programs\/index=\", \"category_tags\": { \"tag1\": \"index\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"29\", \"pattern\": \"^\/([a-z]+)\/programs\/([a-z0-9]+)\", \"category_tags\": { \"tag1\": \"detailed_page\", \"seg1\": \"3\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"30\", \"pattern\": \"^\/radionational\/([a-z]+)\", \"category_tags\": { \"tag1\": \"detailed_page\", \"seg1\": \"3\" } }")
       fd.puts("{ \"type\": \"output\", \"patternkey\": \"31\", \"pattern\": \"^\/radionational\/([0-9]+)\", \"category_tags\": { \"seg1\": \"3\" } }")
       fd.puts("{ \"type\": \"output\", \"patternkey\": \"32\", \"pattern\": \"^\/rn\/([a-z0-9]+)\", \"category_tags\": { \"seg1\": \"2\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"33\", \"pattern\": \"^\/unleashed\/([a-z]+)\/([a-z0-9]+).htm\", \"category_tags\": { \"tag\": \"detailed_page\", \"seg1\": \"2\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"34\", \"pattern\": \"^\/unleashed\/([a-z0-9]+).htm\", \"category_tags\": { \"tag\": \"detailed_page\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"35\", \"pattern\": \"^\/([a-z]+)\/([a-z-]+)\", \"category_tags\": { \"tag\": \"landing_page\", \"seg1\": \"2\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"36\", \"pattern\": \"^\/([a-z0-9]+)$\", \"category_tags\": { \"tag\": \"landing_page\" } }")
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"37\", \"pattern\": \"^\/([a-z0-9]+)\/$\", \"category_tags\": { \"tag\": \"landing_page\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"33\", \"pattern\": \"^\/unleashed\/([a-z]+)\/([a-z0-9]+).htm\", \"category_tags\": { \"tag1\": \"detailed_page\", \"seg1\": \"2\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"34\", \"pattern\": \"^\/unleashed\/([a-z0-9]+).htm\", \"category_tags\": { \"tag1\": \"detailed_page\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"35\", \"pattern\": \"^\/([a-z]+)\/([a-z-]+)\", \"category_tags\": { \"tag1\": \"landing_page\", \"seg1\": \"2\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"36\", \"pattern\": \"^\/([a-z0-9]+)$\", \"category_tags\": { \"tag1\": \"landing_page\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"37\", \"pattern\": \"^\/([a-z0-9]+)\/$\", \"category_tags\": { \"tag1\": \"landing_page\" } }")
 
       fd.puts("{ \"type\": \"input\", \"patternkey\": \"1\", \"pattern\": \"^\/radionational\" }")
       fd.puts("{ \"type\": \"input\", \"patternkey\": \"2\", \"pattern\": \"^\/rn\" }")
@@ -295,7 +295,7 @@ describe LogStash::Filters::UrlGrok do
     tmpfile_path = Stud::Temporary.pathname
 
     File.open(tmpfile_path, "w") do |fd|
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag\": \"test\" } }")
+      fd.puts("{ \"type\": \"input\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag1\": \"test\" } }")
     end
 
     let(:config) do <<-CONFIG
@@ -318,7 +318,7 @@ describe LogStash::Filters::UrlGrok do
     tmpfile_path = Stud::Temporary.pathname
 
     File.open(tmpfile_path, "w") do |fd|
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag\": \"test\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag1\": \"test\" } }")
     end
 
     let(:config) do <<-CONFIG
@@ -343,7 +343,7 @@ describe LogStash::Filters::UrlGrok do
     tmpfile_path = Stud::Temporary.pathname
 
     File.open(tmpfile_path, "w") do |fd|
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag\": \"test\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag1\": \"test\" } }")
     end
 
     let(:config) do <<-CONFIG
@@ -367,7 +367,7 @@ describe LogStash::Filters::UrlGrok do
     tmpfile_path = Stud::Temporary.pathname
 
     File.open(tmpfile_path, "w") do |fd|
-      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag\": \"test\" } }")
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag1\": \"test\" } }")
     end
 
     let(:config) do <<-CONFIG
