@@ -2,7 +2,6 @@
 require "logstash/filters/base"
 require "logstash/namespace"
 require "logstash/environment"
-require "logstash/patterns/core"
 require "set"
 require "json"
 
@@ -54,8 +53,9 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   
     require "grok-pure" # rubygem 'jls-grok'
 
+    # Store pattern files
     @patternfiles = []
-  
+
     # Have @@patterns_path show first. Last-in pattern definitions win; this
     # will let folks redefine built-in patterns at runtime.
     @logger.info? and @logger.info("Grok patterns path", :patterns_dir => @patterns_dir)
@@ -79,6 +79,15 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
 
   public
   def filter(event)
+
+    # if we have no data in the match string dont attempt to filter
+    if defined?(event[@match]).nil?
+      @logger.info("No valid data in event[#{@match}]")
+      return
+    end
+
+    # if the request is in the format http://10.0.10.1
+    event[@match] = event[@match].sub(/^https?\:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/, '')
 
     # Attempt to find the patterns from a malformed url
     # example http://test/a/bhttp://test/b

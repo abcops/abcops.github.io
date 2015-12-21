@@ -338,5 +338,52 @@ describe LogStash::Filters::UrlGrok do
 
   end
 
+  describe "http://ip/a/b/c" do
+
+    tmpfile_path = Stud::Temporary.pathname
+
+    File.open(tmpfile_path, "w") do |fd|
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag\": \"test\" } }")
+    end
+
+    let(:config) do <<-CONFIG
+      filter {
+        urlgrok {
+          patterns_dir => "#{tmpfile_path}"
+        }
+      }
+    CONFIG
+    end
+
+    sample "http://10.0.0.1/test/a" do
+      insist { subject["tags"] } == [ "URLGROK_1" ]
+      insist { subject["category"] } == [ "test" ]
+    end
+
+  end
+
+  describe "no data in event[@match]" do
+
+    tmpfile_path = Stud::Temporary.pathname
+
+    File.open(tmpfile_path, "w") do |fd|
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag\": \"test\" } }")
+    end
+
+    let(:config) do <<-CONFIG
+      filter {
+        urlgrok {
+          patterns_dir => "#{tmpfile_path}"
+        }
+      }
+    CONFIG
+    end
+
+    sample "" do
+      insist { subject["tags"] }.nil?
+    end
+
+  end
+
 
 end
