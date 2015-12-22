@@ -1,3 +1,5 @@
+## 1.1.0
+ - Reversed the logic of the input filter so that any inputs defined will be blocked 
 ## 1.0.4
  - By default the tag_prefix has been set to nil has to be defined in the filter config if you would like to debug events
 ## 1.0.3

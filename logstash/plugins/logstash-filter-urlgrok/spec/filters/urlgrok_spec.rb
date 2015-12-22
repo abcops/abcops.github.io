@@ -55,13 +55,6 @@ describe LogStash::Filters::UrlGrok do
       fd.puts("{ \"type\": \"output\", \"patternkey\": \"36\", \"pattern\": \"^\/([a-z0-9]+)$\", \"category_tags\": { \"tag1\": \"landing_page\" } }")
       fd.puts("{ \"type\": \"output\", \"patternkey\": \"37\", \"pattern\": \"^\/([a-z0-9]+)\/$\", \"category_tags\": { \"tag1\": \"landing_page\" } }")
 
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"1\", \"pattern\": \"^\/radionational\" }")
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"2\", \"pattern\": \"^\/rn\" }")
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"3\", \"pattern\": \"^\/unleashed\" }")
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"4\", \"pattern\": \"^\/abc4000\" }")
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"5\", \"pattern\": \"^\/cm\" }")
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"6\", \"pattern\": \"^\/.*_vip\" }")
-
     end
 
 
@@ -296,7 +289,7 @@ describe LogStash::Filters::UrlGrok do
     tmpfile_path = Stud::Temporary.pathname
 
     File.open(tmpfile_path, "w") do |fd|
-      fd.puts("{ \"type\": \"input\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag1\": \"test\" } }")
+      fd.puts("{ \"type\": \"input\", \"patternkey\": \"1\", \"pattern\": \"^\/hello\", \"category_tags\": { \"tag1\": \"test\" } }")
     end
 
     let(:config) do <<-CONFIG
@@ -309,7 +302,7 @@ describe LogStash::Filters::UrlGrok do
     end
 
     sample "/hello/this/is/a/test" do
-      insist { subject["tags"] } == [ "_urlgrokparsefailure" ]
+      insist { subject["tags"] }.nil? 
     end
 
   end

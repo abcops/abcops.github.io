@@ -113,10 +113,10 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
            if not @tag_prefix.nil?
              event["tags"] ||= []
              event["tags"] << "#{@tag_prefix}#{key}" unless event["tags"].include?("#{@tag_prefix}#{key}")
-             @logger.info("pattern match? key=URLGROK_#{key}") 
+             @logger.info("Output pattern match? key=URLGROK_#{key}") 
            end
         else
-           @logger.info("pattern match? nil")
+           @logger.info("Output pattern match? nil")
            add_error_tags(event)
         end
 
@@ -146,15 +146,15 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
 
   private
   def check_input_filter(event)
-    if @input_filter_has.nil? 
-      return true
-    end
+    # the input filter is used to ignore messages
     @input_filter_hash.each do |k,v|
-      return match(event[@match], v['pattern'])
-      @logger.info("Input pattern found key=#{k}")
+      if match(event[@match], v["pattern"])
+        @logger.info("Input pattern found, message ignored key=#{k}")
+        return false
+      end
     end
-    @logger.info("Input pattern not found, message ignored")
-    return false
+    @logger.info("Input pattern not found, parsing message")
+    return true
   end
 
   private
