@@ -405,5 +405,4 @@ describe LogStash::Filters::UrlGrok do
 
   end
 
-
 end

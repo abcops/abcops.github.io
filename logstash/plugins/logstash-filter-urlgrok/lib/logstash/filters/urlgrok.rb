@@ -80,52 +80,51 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
 
   public
   def filter(event)
+  
+    begin
+      # if the request is in the format http://<host>/
+      event[@match] = event[@match].sub(/^https?\:\/\/([^\/]+)/, '')
 
-    # if we have no data in the match string dont attempt to filter
-    if defined?(event[@match]).nil?
-      @logger.info("No valid data in event[#{@match}]")
-      return
-    end
-
-    # if the request is in the format http://10.0.10.1
-    event[@match] = event[@match].sub(/^https?\:\/\/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/, '')
-
-    # Attempt to find the patterns from a malformed url
-    # example http://test/a/bhttp://test/b
-    # else attempt to split on ? to collect any query parameters
-    if event[@match] =~ /http/
-      eventarr = event[@match].split("http")
-    else
-      eventarr = event[@match].split("?")
-    end
-
-    if eventarr.size() >= 1
-
-      urlarr = eventarr[0].split("/")
-
-      if check_input_filter(event)  
-
-        event["category"] ||= [] 
-        event["category"] << urlarr[1] unless event["category"].include?(urlarr[1])
-
-        key = get_category_tags(event, urlarr)
-        if not key.nil?
-           if not @tag_prefix.nil?
-             event["tags"] ||= []
-             event["tags"] << "#{@tag_prefix}#{key}" unless event["tags"].include?("#{@tag_prefix}#{key}")
-             @logger.info("Output pattern match? key=URLGROK_#{key}") 
-           end
-        else
-           @logger.info("Output pattern match? nil")
-           add_error_tags(event)
-        end
-
-        # if have a second part the url confirm it is a query component
-        if eventarr.size() == 2 and eventarr[1] !~ /^:/
-          event["query"] = "\"#{String(eventarr[1])}\""
-        end
-
+      # Attempt to find the patterns from a malformed url
+      # example http://test/a/bhttp://test/b
+      # else attempt to split on ? to collect any query parameters
+      if event[@match] =~ /http/
+        eventarr = event[@match].split("http")
+      else
+        eventarr = event[@match].split("?")
       end
+
+      if eventarr.size() >= 1
+ 
+        urlarr = eventarr[0].split("/")
+
+        if check_input_filter(event)  
+
+          event["category"] ||= [] 
+          event["category"] << urlarr[1] unless event["category"].include?(urlarr[1])
+
+          key = get_category_tags(event, urlarr)
+          if not key.nil?
+            if not @tag_prefix.nil?
+              event["tags"] ||= []
+              event["tags"] << "#{@tag_prefix}#{key}" unless event["tags"].include?("#{@tag_prefix}#{key}")
+              @logger.info("Output pattern match? key=URLGROK_#{key}") 
+            end
+          else
+            add_error_tags(event)
+          end
+
+          # if have a second part the url confirm it is a query component
+          if eventarr.size() == 2 and eventarr[1] !~ /^:/
+            event["query"] = "\"#{String(eventarr[1])}\""
+          end
+
+        end
+      end
+
+    rescue
+      event["tags"] ||= []
+      event["tags"] << "_urlgrokfatalerror" unless event["tags"].include?("_urlgrokfatalerror")
     end
 
     # filter_matched should go in the last line of our successful code
@@ -176,7 +175,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
           event['category'] << urlarr[v.to_i] #unless event['category'].include?(urlarr[v.to_i])
         end
       else
-        @logger.info("Invalid category tag")
+        @logger.error("Invalid category tag #{k} #{v}")
       end
     end
   end
@@ -191,15 +190,19 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
       end
       file = File.read(path)
       file.each_line do |line|
-        json_line = JSON.parse(line)
-        if json_line['type'] == "input"
-          input_filter[json_line['patternkey']] = json_line
-          @logger.info("Pattern file input filter element: ", json_line)
-        elsif json_line['type'] == "output"
-          output_filter[json_line['patternkey']] = json_line
-          @logger.info("Pattern file output filter element: ", json_line)
-        else
-          @logger.info("Unknown pattern type valid values input/output: ", json_line)
+        begin
+          json_line = JSON.parse(line)
+          if json_line['type'] == "input"
+            input_filter[json_line['patternkey']] = json_line
+            @logger.info("Pattern file input filter element: ", json_line)
+          elsif json_line['type'] == "output"
+            output_filter[json_line['patternkey']] = json_line
+            @logger.info("Pattern file output filter element: ", json_line)
+          else
+            @logger.error("Unknown pattern type valid values input/output: ", json_line)
+          end
+        rescue
+          @logger.error("Unable to parse pattern file, check format: ", line)
         end
       end
     end

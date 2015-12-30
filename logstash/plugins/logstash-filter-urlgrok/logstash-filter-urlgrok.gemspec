@@ -1,9 +1,9 @@
 Gem::Specification.new do |s|
   s.name = 'logstash-filter-urlgrok'
-  s.version         = '1.1.0'
+  s.version         = '1.1.1'
   s.licenses = ['Apache License (2.0)']
   s.summary = "urlgrok filter will parse url request pre defined in a pattern file"
-  s.description = ""
+  s.description = "Categorise url segments determine by pattern input file"
   s.authors = ["Warren Cahill"]
   s.email = 'warren.cahill@abc.net.au'
   s.homepage = "http://www.elastic.co/guide/en/logstash/current/index.html"

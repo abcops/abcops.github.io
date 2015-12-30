@@ -1,3 +1,5 @@
+## 1.1.1
+ - Catch if the input message is nil, updated logging level to error rather than info 
 ## 1.1.0
  - Reversed the logic of the input filter so that any inputs defined will be blocked 
 ## 1.0.4
