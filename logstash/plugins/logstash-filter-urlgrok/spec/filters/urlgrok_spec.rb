@@ -405,4 +405,29 @@ describe LogStash::Filters::UrlGrok do
 
   end
 
+  describe "confirm category is nil on no filter match" do
+
+    tmpfile_path = Stud::Temporary.pathname
+
+    File.open(tmpfile_path, "w") do |fd|
+      fd.puts("{ \"type\": \"output\", \"patternkey\": \"1\", \"pattern\": \"^\/test\", \"category_tags\": { \"tag1\": \"test\", \"seg1\": \"2\", \"seg2\": \"3\", \"seg3\": \"4\", \"seg4\": \"5\" } }")
+    end
+
+    let(:config) do <<-CONFIG
+      filter {
+        urlgrok {
+          tag_prefix => "URLGROK_"
+          patterns_dir => "#{tmpfile_path}"
+        }
+      }
+    CONFIG
+    end
+
+    sample "/" do
+      insist { subject["category"] }.nil?
+    end
+
+  end
+
+
 end

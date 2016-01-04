@@ -1,3 +1,5 @@
+## 1.1.2
+ - Only add category tags on valid filter match
 ## 1.1.1
  - Catch if the input message is nil, updated logging level to error rather than info 
 ## 1.1.0

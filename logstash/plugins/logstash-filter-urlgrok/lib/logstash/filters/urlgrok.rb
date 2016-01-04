@@ -100,9 +100,6 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
 
         if check_input_filter(event)  
 
-          event["category"] ||= [] 
-          event["category"] << urlarr[1] unless event["category"].include?(urlarr[1])
-
           key = get_category_tags(event, urlarr)
           if not key.nil?
             if not @tag_prefix.nil?
@@ -167,6 +164,10 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
 
   private
   def add_category(event, category_tags, urlarr)
+  
+    event["category"] ||= []
+    event["category"] << urlarr[1] unless event["category"].include?(urlarr[1])
+
     category_tags.each do |k,v|
       if k =~ /^tag/
         event['category'] << v unless event['category'].include?(v)
