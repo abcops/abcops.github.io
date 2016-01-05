@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.version         = '1.0.0'
   s.licenses = ['Apache License (2.0)']
   s.summary = "Validates a predefined set of fields exist in the message"
-  s.description = "This filter will validate a set of predefined values with reindexed data"
+  s.description = "This filter will validate a set of predefined values with reindexed data, configuration was specifically designed for our purposes."
   s.authors = ["Warren Cahill"]
   s.email = 'warren.cahill@abc.net.au'
   s.homepage = "http://www.elastic.co/guide/en/logstash/current/index.html"
@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
 
   # Gem dependencies
   s.add_runtime_dependency "logstash-core", ">= 2.1.0", "< 3.0.0"
-  s.add_development_dependency 'logstash-devutils'
+  s.add_development_dependency 'logstash-devutils', '~> 0'
 end

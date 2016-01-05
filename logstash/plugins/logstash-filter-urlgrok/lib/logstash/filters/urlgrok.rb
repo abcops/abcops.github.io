@@ -1,7 +1,6 @@
 # encoding: utf-8
 require "logstash/filters/base"
 require "logstash/namespace"
-require "logstash/environment"
 require "set"
 require "json"
 
@@ -13,7 +12,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   #
   # filter {
   #   urlgrok {
-  #     match => "message"
+  #     target => "message"
   #     tag_prefix => "URLGROK_"
   #     patterns_dir => "/pattern/location"
   #     tag_on_failure => [ "_urlgrokparsefailure" ]
@@ -36,7 +35,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   # { "type": "output", "patternkey": "1", "pattern": "^example", "category_tags": { "seg1": "1", "tag1": "category1" .... } }  
 
   # the event key that we will be parsing
-  config :match, :validate => :string, :default => "message"
+  config :target, :validate => :string, :default => "message"
 
   # Prefix added to the patternkey which will be stored in the tags
   # default in nil which will add no tag 
@@ -83,15 +82,15 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   
     begin
       # if the request is in the format http://<host>/
-      event[@match] = event[@match].sub(/^https?\:\/\/([^\/]+)/, '')
+      event[@target] = event[@target].sub(/^https?\:\/\/([^\/]+)/, '')
 
       # Attempt to find the patterns from a malformed url
       # example http://test/a/bhttp://test/b
       # else attempt to split on ? to collect any query parameters
-      if event[@match] =~ /http/
-        eventarr = event[@match].split("http")
+      if event[@target] =~ /http/
+        eventarr = event[@target].split("http")
       else
-        eventarr = event[@match].split("?")
+        eventarr = event[@target].split("?")
       end
 
       if eventarr.size() >= 1
@@ -105,7 +104,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
             if not @tag_prefix.nil?
               event["tags"] ||= []
               event["tags"] << "#{@tag_prefix}#{key}" unless event["tags"].include?("#{@tag_prefix}#{key}")
-              @logger.info("Output pattern match? key=URLGROK_#{key}") 
+              @logger.debug("Output pattern match? key=URLGROK_#{key}") 
             end
           else
             add_error_tags(event)
@@ -132,7 +131,7 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   private
   def get_category_tags(event, urlarr)
     @output_filter_hash.each do |k,v|
-      if match(event[@match], v["pattern"])
+      if match(event[@target], v["pattern"])
         add_category(event, v['category_tags'], urlarr)
         return k
       end
@@ -144,12 +143,12 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
   def check_input_filter(event)
     # the input filter is used to ignore messages
     @input_filter_hash.each do |k,v|
-      if match(event[@match], v["pattern"])
-        @logger.info("Input pattern found, message ignored key=#{k}")
+      if match(event[@target], v["pattern"])
+        @logger.debug("Input pattern found, message ignored key=#{k}")
         return false
       end
     end
-    @logger.info("Input pattern not found, parsing message")
+    @logger.debug("Input pattern not found, parsing message")
     return true
   end
 
