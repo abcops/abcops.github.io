@@ -114,7 +114,10 @@ class LogStash::Filters::UrlGrok < LogStash::Filters::Base
           if eventarr.size() == 2 and eventarr[1] !~ /^:/
             event["query"] = "\"#{String(eventarr[1])}\""
           end
-
+  
+          # Add the uri for the request which is the request with query stripped
+          event["uri"] = eventarr[0]
+          
         end
       end
 

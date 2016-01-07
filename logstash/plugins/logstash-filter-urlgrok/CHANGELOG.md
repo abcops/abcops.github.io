@@ -1,3 +1,5 @@
+## 1.1.4
+ - Added new uri field
 ## 1.1.3
  - To much spam in info log moved events to debug
 ## 1.1.2

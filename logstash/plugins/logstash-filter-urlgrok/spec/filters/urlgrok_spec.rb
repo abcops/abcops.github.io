@@ -71,6 +71,7 @@ describe LogStash::Filters::UrlGrok do
     sample "/news/code/test" do
       insist { subject["tags"] } == [ "URLGROK_1" ]
       insist { subject["category"] } == [ "news", "code" ]
+      insist { subject["uri"] } == "/news/code/test"
     end
 
     sample "/cm/cb/4480226/Grandstand+iOS+icon+180x180/data.png" do
@@ -137,6 +138,7 @@ describe LogStash::Filters::UrlGrok do
     sample "/news/map/id=" do
       insist { subject["tags"] } == [ "URLGROK_14" ]
       insist { subject["category"] } == [ "news", "map" ]
+      insist { subject["uri"] } == "/news/map/id="
     end
 
     sample "/news/map/" do
@@ -188,6 +190,7 @@ describe LogStash::Filters::UrlGrok do
       insist { subject["tags"] } == [ "URLGROK_24" ]
       insist { subject["category"] } == [ "news", "detailed_page" ]
       insist { subject["query"] } == "\"WT.ac=statenews_vic\""
+      insist { subject["uri"] } == "/news/2015-12-18/taxpayers-may-have-to-pay-clean-up-bill-for-victorian-coal-mines/7039898"
     end
 
     sample "/news/img" do
