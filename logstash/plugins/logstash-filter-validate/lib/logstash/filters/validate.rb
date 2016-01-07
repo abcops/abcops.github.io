@@ -72,18 +72,18 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
 
     begin
       path = event[@target].sub(/\.[0-9]{4}-[0-9]{2}-[0-9]{2}/, "")
-      getjson = @keyhash[event[@target]]
-        
+      getjson = @keyhash[path]
+
       if getjson.nil?
-        @logger.error("key does not exists in #{@validate_file} ", event[@match])
-        errorflag=errorflag|ERRCODE::NOKEYFOUND
-      else 
+        errorflag=errorflag|ERRCODE::NOKEYFOUNDERR
+        @logger.error("errorcode=#{errorflag} key does not exists in #{@validate_file} #{event[path]}")
+      else
         getjson.each do |k,v|
-          if event["type"] !~ /access[.-]log/ and event["type"] !~ /error[.-]log/
+          if event["type"] !~ /access[.-]log/ and event["type"] !~ /error[.-]log/ and event["type"] !~ /varnishncsa.log/
             if k != "host"
               if event[k] != v
-                debug && @logger.info? && @logger.info("event=#{event} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
                 errorflag=errorflag|ERRCODE::NONACCESSPARSEERR
+                debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
               end
             end
           else
@@ -91,19 +91,26 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
               if k == "zone"
                 if event["host"] =~ /^inw/
                   if event["zone"] != "red"
-                    debug && @logger.info? && @logger.info("event=#{event} host=#{event['host']} zone=#{event['zone']}")
                     errorflag=errorflag|ERRCODE::REDZONEERR
+                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} host=#{event['host']} zone=#{event['zone']}")
                   end
                 elsif event["host"] =~ /^nuc/
                   if event["zone"] != "blue"
-                    debug && @logger.info? && @logger.info("event=#{event} host=#{event['host']} zone=#{event['zone']}")
                     errorflag=errorflag|ERRCODE::BLUEZONEERR
+                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} host=#{event['host']} zone=#{event['zone']}")
                   end
                 end
               else
-                if event[k] != v
-                  debug && @logger.info? && @logger.info("event=#{event} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
-                  errorflag=errorflag|ERRCODE::ACCESSPARSEERR
+                if k == "path"
+                  if path != v
+                    errorflag=errorflag|ERRCODE::ACCESSPARSEERR
+                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} key=#{k} event[#{k}]=#{path} value=#{v}")
+                  end
+                else
+                  if event[k] != v
+                    errorflag=errorflag|ERRCODE::ACCESSPARSEERR
+                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
+                  end
                 end
               end
             end
@@ -111,7 +118,7 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
         end
       end
     rescue
-      debug && @logger.warn("Unable to determine valid data")
+      debug && @logger.warn("Unable to determine valid data #{path}")
       errorflag=errorflag|ERRCODE::NOVALIDDATAERR
     end
         

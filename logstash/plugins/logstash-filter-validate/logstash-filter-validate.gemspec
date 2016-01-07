@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'logstash-filter-validate'
-  s.version         = '1.0.0'
+  s.version         = '1.0.1'
   s.licenses = ['Apache License (2.0)']
   s.summary = "Validates a predefined set of fields exist in the message"
   s.description = "This filter will validate a set of predefined values with reindexed data, configuration was specifically designed for our purposes."
