@@ -60,7 +60,7 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
     @logger.debug("validate_file", @keyhash)
 
     if @keyhash.empty?
-      @logger.error("Unable to parse validation file")
+      @logger.error("logstash-filter-validate: Unable to parse validation file")
     end
 
   end # def register
@@ -76,14 +76,14 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
 
       if getjson.nil?
         errorflag=errorflag|ERRCODE::NOKEYFOUNDERR
-        @logger.error("errorcode=#{errorflag} key does not exists in #{@validate_file} #{event[path]}")
+        @logger.error("logstash-filter-validate: errorcode=#{errorflag} key does not exists in #{@validate_file} #{event[path]}")
       else
         getjson.each do |k,v|
           if event["type"] !~ /access[.-]log/ and event["type"] !~ /error[.-]log/ and event["type"] !~ /varnishncsa.log/
             if k != "host"
               if event[k] != v
                 errorflag=errorflag|ERRCODE::NONACCESSPARSEERR
-                debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
+                debug && @logger.warn? && @logger.warn("logstash-filter-validate: errorcode=#{errorflag} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
               end
             end
           else
@@ -92,24 +92,24 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
                 if event["host"] =~ /^inw/
                   if event["zone"] != "red"
                     errorflag=errorflag|ERRCODE::REDZONEERR
-                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} host=#{event['host']} zone=#{event['zone']}")
+                    debug && @logger.warn? && @logger.warn("logstash-filter-validate: errorcode=#{errorflag} host=#{event['host']} zone=#{event['zone']}")
                   end
                 elsif event["host"] =~ /^nuc/
                   if event["zone"] != "blue"
                     errorflag=errorflag|ERRCODE::BLUEZONEERR
-                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} host=#{event['host']} zone=#{event['zone']}")
+                    debug && @logger.warn? && @logger.warn("logstash-filter-validate: errorcode=#{errorflag} host=#{event['host']} zone=#{event['zone']}")
                   end
                 end
               else
                 if k == "path"
                   if path != v
                     errorflag=errorflag|ERRCODE::ACCESSPARSEERR
-                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} key=#{k} event[#{k}]=#{path} value=#{v}")
+                    debug && @logger.warn? && @logger.warn("logstash-filter-validate: errorcode=#{errorflag} key=#{k} event[#{k}]=#{path} value=#{v}")
                   end
                 else
                   if event[k] != v
                     errorflag=errorflag|ERRCODE::ACCESSPARSEERR
-                    debug && @logger.warn? && @logger.warn("errorcode=#{errorflag} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
+                    debug && @logger.warn? && @logger.warn("logstash-filter-validate: errorcode=#{errorflag} key=#{k} event[#{k}]=#{event[k]} value=#{v}")
                   end
                 end
               end
@@ -118,8 +118,8 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
         end
       end
     rescue
-      debug && @logger.warn("Unable to determine valid data #{path}")
       errorflag=errorflag|ERRCODE::NOVALIDDATAERR
+      debug && @logger.warn("logstash-filter-validate: errorcode=#{errorflag} Unable to determine valid data #{path}")
     end
         
     if errorflag > 0
@@ -153,7 +153,7 @@ class LogStash::Filters::Validate < LogStash::Filters::Base
           @keyhash[json_line["path"]] = json_line
         end
       rescue StandardError => e
-        @logger.error("load_validate_file threw exception", :exception => e.message)
+        @logger.error("logstash-filter-validate: load_validate_file threw exception", :exception => e.message)
       end
     end
 
