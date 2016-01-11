@@ -17,7 +17,7 @@ describe LogStash::Filters::VarnishLog do
 
     let(:config) do <<-CONFIG
       filter {
-        varnish {
+        varnishlog {
            param_list => { "Request" => { "ReqHeader" => { "X-Akamai-Edgescape" => [ ] "Cookie" => [ ]  } } }
         }
       }
@@ -43,7 +43,7 @@ describe LogStash::Filters::VarnishLog do
 
     let(:config) do <<-CONFIG
       filter {
-        varnish {
+        varnishlog {
            param_list => { "Request" => { "ReqHeader" => { "X-Akamai-Edgescape" => [ ",", "=" ] "Cookie" => [ "=" ]  } } }
         }
       }
@@ -76,7 +76,7 @@ describe LogStash::Filters::VarnishLog do
 
     let(:config) do <<-CONFIG
       filter {
-        varnish {
+        varnishlog {
            param_list => { "Request" => { "ReqMethod" => [ ] } }
         }
       }
@@ -101,7 +101,7 @@ describe LogStash::Filters::VarnishLog do
 
     let(:config) do <<-CONFIG
       filter {
-        varnish {
+        varnishlog {
         }
       }
     CONFIG
