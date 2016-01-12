@@ -180,22 +180,19 @@ class LogStash::Filters::VarnishLog < LogStash::Filters::Base
   private
   def parse_message_vales(event, messageEvent, messageTag, messageValue, delimeters)
 
-    if delimeters.size > 0
+    data = messageValue.split( delimeters[0] )
+
+    if delimeters.size == 2
       data = messageValue.split( delimeters[0] )
-      event[messageEvent][messageTag][data[0]] = data[1]
       delimeters=delimeters.drop(1)
-
-      get_geopoint_data(event, messageTag, data)
-
-      # if no more delimiter we dont need to iterate
-      if delimeters.size > 0
-        
-        data.each do |i|
+      data.each do |i|
           parse_message_vales(event, messageEvent, messageTag, i, delimeters)
-        end
-        
       end
+    elsif delimeters.size == 1
+      get_geopoint_data(event, messageTag, data)
+      event[messageEvent][messageTag][data[0]] = data[1]
     end
+
   end
 
   private
